@@ -1,10 +1,8 @@
 from __future__ import print_function
 import webbrowser
-from re import search
 
 import speech_recognition
 import pyttsx3
-import wikipedia
 import time
 import datetime
 import os.path
@@ -12,12 +10,14 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
-from tkinter import *
-from  tkinter import ttk
+import pprint
 
 engine = pyttsx3.init()
 webbrowser.register('chrome', None)
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
+
+search_api_key = 'AIzaSyA3GFJZzxK2dihC5D7ouD8EIBUzN5aQrg4'
+cse_id = 'c44d3577d29b6edaa'
 
 def speak(audio):
     engine.say(audio)
@@ -129,6 +129,11 @@ def wakeCommand():
         return "None"
     return query
 
+def google_search(search_term, api_key, cse_id, **kwargs):
+    service = build("customsearch", "v1", developerKey=api_key)
+    res = service.cse().list(q=search_term, cx=cse_id, **kwargs).execute()
+    return res['items']
+
 def actions():
     statement = takeCommand().lower()
     if 'open youtube' in statement:
@@ -143,9 +148,6 @@ def actions():
         webbrowser.open_new_tab("gmail.com")
         speak("Google Mail open now")
         time.sleep(5)
-    if 'time' in statement:
-        strTime = datetime.datetime.now().strftime("%H:%M:%S")
-        speak(f"the time is {strTime}")
     if 'news' in statement:
         webbrowser.open_new_tab("https://www.bbc.com")
         speak('Here are some headlines from BBC')
@@ -154,7 +156,23 @@ def actions():
         computerTime()
     if 'calendar' in statement:
         events()
-
+    if 'open chapter website' in statement:
+        webbrowser.open_new_tab("pksbetachi.org")
+        speak("Opening Beta Chi website")
+        time.sleep(5)
+    if 'Phi Kappa Sigma website' in statement:
+        webbrowser.open_new_tab("pks.org")
+        speak("Opening Phi Kap's national website")
+        time.sleep(5)
+    else:
+        results = google_search(statement, search_api_key, cse_id)
+        count = 0;
+        for results in results:
+            count += 1
+            speak('top search result was on ' + results['link'])
+            speak(results['snippet'])
+            if count == 1:
+                break
 
 if __name__=="__main__":
     while True:
