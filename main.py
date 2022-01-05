@@ -16,8 +16,8 @@ engine = pyttsx3.init()
 webbrowser.register('chrome', None)
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 
-search_api_key = 'AIzaSyA3GFJZzxK2dihC5D7ouD8EIBUzN5aQrg4'
-cse_id = 'c44d3577d29b6edaa'
+search_api_key = ''
+cse_id = ''
 
 def speak(audio):
     engine.say(audio)
